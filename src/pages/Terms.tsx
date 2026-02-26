@@ -63,8 +63,8 @@ const Terms = () => {
               </p>
               <div className="p-4 bg-card rounded-xl border border-border">
                 <p className="text-foreground font-medium">Tendryl Support</p>
-                <p className="text-muted-foreground text-sm">Email: support@tendryl.com</p>
-                <p className="text-muted-foreground text-sm">Phone: (555) 123-4567</p>
+                <p className="text-muted-foreground text-sm">Email: support@tendryl.co</p>
+                <p className="text-muted-foreground text-sm">Phone: (910) 597-1998</p>
               </div>
               <div className="mt-4 p-4 bg-tendryl-amber/5 border border-tendryl-amber/20 rounded-xl">
                 <p className="text-foreground font-medium mb-2">Opt-Out Instructions:</p>
@@ -126,8 +126,8 @@ const Terms = () => {
           </section>
         </div>
       </main>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Terms;
