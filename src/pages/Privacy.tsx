@@ -96,14 +96,14 @@ const Privacy = () => {
             </p>
             <div className="mt-4 p-4 bg-card rounded-xl border border-border">
               <p className="text-foreground font-medium">Tendryl Privacy Team</p>
-              <p className="text-muted-foreground text-sm">Email: privacy@tendryl.com</p>
-              <p className="text-muted-foreground text-sm">Phone: (555) 123-4567</p>
+              <p className="text-muted-foreground text-sm">Email: privacy@tendryl.co</p>
+              <p className="text-muted-foreground text-sm">Phone: (910) 597-1998</p>
             </div>
           </section>
         </div>
       </main>
-    </div>
-  );
+    </div>);
+
 };
 
 export default Privacy;
