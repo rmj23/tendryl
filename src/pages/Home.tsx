@@ -51,7 +51,7 @@ export default function HomePage() {
   const location = useLocation();
   const [layouts, setLayouts] = useState(defaultLayouts);
 
-  const onLayoutChange = useCallback((_: Layout[], allLayouts: any) => {
+  const onLayoutChange = useCallback((_: any, allLayouts: any) => {
     setLayouts(allLayouts);
   }, []);
 
