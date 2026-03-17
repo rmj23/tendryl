@@ -1,7 +1,6 @@
 import { useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-// @ts-ignore
-import ReactGridLayout from "react-grid-layout";
+import { Responsive, WidthProvider } from "react-grid-layout";
 const { Responsive, WidthProvider } = ReactGridLayout;
 import { Home as HomeIcon, Phone, MessageSquare, LogOut, Sprout } from "lucide-react";
 import { GreenhouseMap } from "@/components/dashboard/GreenhouseMap";
