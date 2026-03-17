@@ -166,7 +166,7 @@ export function useDashboardGrid(
           setActiveId(null);
           setDragPhase("idle");
           dropTimeoutRef.current = null;
-        }, 360);
+        }, 180);
       };
 
       document.addEventListener("pointermove", onMove);
@@ -248,7 +248,7 @@ export function useDashboardGrid(
           setActiveId(null);
           setDragPhase("idle");
           dropTimeoutRef.current = null;
-        }, 360);
+        }, 180);
       };
 
       document.addEventListener("pointermove", onMove);

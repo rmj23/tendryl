@@ -88,8 +88,8 @@ export function DashboardGrid({
               isActive
                 ? "shadow-lg ring-2 ring-primary/30 z-10"
                 : "border-border"
-            } ${isDragging ? "shadow-2xl ring-primary/50 opacity-95 animate-widget-pickup" : ""} ${
-              isDropping ? "animate-widget-drop" : ""
+            } ${isDragging ? "scale-[1.015] shadow-2xl ring-primary/40 opacity-95" : ""} ${
+              isDropping ? "scale-[0.995]" : ""
             }`}
             style={{
               gridColumn: `${layout.col} / span ${layout.colSpan}`,
@@ -99,7 +99,7 @@ export function DashboardGrid({
             {/* Drag handle */}
             <div
               className={`flex items-center justify-center h-5 cursor-grab active:cursor-grabbing bg-muted/30 hover:bg-muted/60 transition-colors border-b border-border/50 flex-shrink-0 ${
-                isDragging ? "bg-primary/15" : ""
+                isDragging ? "bg-primary/10" : ""
               }`}
               onPointerDown={(e) => {
                 if (containerRef.current) {
