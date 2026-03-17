@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Responsive, WidthProvider } from "react-grid-layout";
-// @ts-ignore
-import type { Layout } from "react-grid-layout";
+import ReactGridLayout from "react-grid-layout";
+const { Responsive, WidthProvider } = ReactGridLayout;
+type Layout = ReactGridLayout.Layout[];
 import { Home as HomeIcon, Phone, MessageSquare, LogOut, Sprout } from "lucide-react";
 import { GreenhouseMap } from "@/components/dashboard/GreenhouseMap";
 import { TodaysTasks } from "@/components/dashboard/TodaysTasks";
