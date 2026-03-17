@@ -71,7 +71,7 @@ export function DashboardGrid({
         return (
           <div
             key={widget.id}
-            className={`rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col transition-shadow ${
+            className={`relative rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col transition-shadow ${
               isActive
                 ? "shadow-lg ring-2 ring-primary/30 z-10"
                 : "border-border"
@@ -98,13 +98,9 @@ export function DashboardGrid({
               {widget.component}
             </div>
 
-            {/* Resize handle */}
+            {/* Resize handle (bottom-right corner) */}
             <div
               className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize z-20 group"
-              style={{
-                gridColumn: `${layout.col} / span ${layout.colSpan}`,
-                gridRow: `${layout.row} / span ${layout.rowSpan}`,
-              }}
               onPointerDown={(e) => {
                 if (containerRef.current) {
                   startResize(e, widget.id, containerRef.current);

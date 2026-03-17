@@ -8,17 +8,24 @@ import { AlertsWidget } from "@/components/dashboard/AlertsWidget";
 import { InventoryWidget } from "@/components/dashboard/InventoryWidget";
 import { ProductionStats } from "@/components/dashboard/ProductionStats";
 import { WaterUsageWidget } from "@/components/dashboard/WaterUsageWidget";
+import { DashboardGrid } from "@/components/dashboard/DashboardGrid";
 import { useIsMobile } from "@/hooks/use-mobile";
-import {
-  ResizablePanelGroup,
-  ResizablePanel,
-  ResizableHandle,
-} from "@/components/ui/resizable";
 
 const navItems = [
   { icon: HomeIcon, label: "Home", path: "/home" },
   { icon: Phone, label: "Call Flows", path: "/call-flows" },
   { icon: MessageSquare, label: "Messages", path: "/messages" },
+];
+
+const defaultWidgets = [
+  { id: "stats", component: <ProductionStats />, col: 1, row: 1, colSpan: 12, rowSpan: 1, minW: 4, minH: 1 },
+  { id: "map", component: <GreenhouseMap />, col: 1, row: 2, colSpan: 8, rowSpan: 4, minW: 4, minH: 2 },
+  { id: "weather", component: <WeatherWidget />, col: 9, row: 2, colSpan: 4, rowSpan: 2, minW: 2, minH: 2 },
+  { id: "alerts", component: <AlertsWidget />, col: 9, row: 4, colSpan: 4, rowSpan: 2, minW: 2, minH: 2 },
+  { id: "tasks", component: <TodaysTasks />, col: 1, row: 6, colSpan: 4, rowSpan: 3, minW: 2, minH: 2 },
+  { id: "schedule", component: <GrowingSchedule />, col: 5, row: 6, colSpan: 3, rowSpan: 3, minW: 2, minH: 2 },
+  { id: "inventory", component: <InventoryWidget />, col: 8, row: 6, colSpan: 3, rowSpan: 3, minW: 2, minH: 2 },
+  { id: "water", component: <WaterUsageWidget />, col: 11, row: 6, colSpan: 2, rowSpan: 3, minW: 2, minH: 2 },
 ];
 
 export default function HomePage() {
@@ -103,68 +110,18 @@ export default function HomePage() {
   );
 }
 
-/** Desktop: resizable panels */
 function DesktopLayout() {
   return (
-    <div className="flex-1 min-h-0 flex flex-col">
-      <div className="p-4 flex-shrink-0">
-        <ProductionStats />
-      </div>
-      <div className="flex-1 min-h-0 px-4 pb-4">
-        <ResizablePanelGroup direction="vertical" className="h-full">
-          {/* Top row: Map + Weather/Alerts */}
-          <ResizablePanel defaultSize={55} minSize={30}>
-            <ResizablePanelGroup direction="horizontal">
-              <ResizablePanel defaultSize={65} minSize={30}>
-                <Widget><GreenhouseMap /></Widget>
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={35} minSize={20}>
-                <div className="h-full flex flex-col gap-4">
-                  <div className="flex-1 min-h-0">
-                    <Widget><WeatherWidget /></Widget>
-                  </div>
-                  <div className="flex-1 min-h-0">
-                    <Widget><AlertsWidget /></Widget>
-                  </div>
-                </div>
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          </ResizablePanel>
-
-          <ResizableHandle withHandle />
-
-          {/* Bottom row: Tasks + Schedule + Inventory + Water */}
-          <ResizablePanel defaultSize={45} minSize={25}>
-            <ResizablePanelGroup direction="horizontal">
-              <ResizablePanel defaultSize={35} minSize={15}>
-                <Widget><TodaysTasks /></Widget>
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={25} minSize={12}>
-                <Widget><GrowingSchedule /></Widget>
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={25} minSize={12}>
-                <Widget><InventoryWidget /></Widget>
-              </ResizablePanel>
-              <ResizableHandle withHandle />
-              <ResizablePanel defaultSize={15} minSize={10}>
-                <Widget><WaterUsageWidget /></Widget>
-              </ResizablePanel>
-            </ResizablePanelGroup>
-          </ResizablePanel>
-        </ResizablePanelGroup>
-      </div>
+    <div className="flex-1 overflow-y-auto p-4">
+      <DashboardGrid widgets={defaultWidgets} cols={12} rowHeight={80} maxRows={12} />
     </div>
   );
 }
 
-/** Mobile/Tablet: stacked grid, no resizing */
 function MobileLayout() {
   return (
     <div className="flex-1 overflow-y-auto p-4 space-y-4">
-      <ProductionStats />
+      <Widget><ProductionStats /></Widget>
       <Widget><GreenhouseMap /></Widget>
       <Widget><WeatherWidget /></Widget>
       <Widget><AlertsWidget /></Widget>
@@ -178,7 +135,7 @@ function MobileLayout() {
 
 function Widget({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden h-full">
+    <div className="rounded-xl border border-border bg-card shadow-sm overflow-hidden">
       {children}
     </div>
   );
