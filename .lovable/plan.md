@@ -1,77 +1,57 @@
 
 
-# 🌿 Tendryl — SaaS Landing Page + Legal Pages
+## Plan: Individually Draggable & Resizable Dashboard Widgets
 
-## Overview
-A bold, modern landing page for **Tendryl** — an all-in-one plant nursery management platform. The design blends organic, nature-inspired aesthetics (greens, earth tones, soft gradients) with a sleek, tech-forward feel. Plus two essential legal pages for compliance.
+### Problem
+The current `react-resizable-panels` layout only allows resizing along shared axes — not individual widget drag-and-drop or independent height/width control. Previous attempts with `react-grid-layout` failed due to ESM export issues (`WidthProvider` not available in its ESM bundle).
 
----
+### Approach
+Build a custom grid-based dashboard using **CSS Grid snapping** with a custom drag-and-resize system, avoiding problematic third-party grid layout libraries entirely.
 
-## Landing Page Sections
+**Core mechanism:**
+- Define a virtual grid (e.g., 12 columns × N rows, each cell ~80px)
+- Each widget has a grid position (`col`, `row`) and size (`colSpan`, `rowSpan`)
+- Drag: use native pointer events to move widgets, snapping to grid cells
+- Resize: add a resize handle to each widget's corner, snapping size to grid units
+- Collision detection: before placing a widget, check that no other widget occupies those cells; if blocked, revert to previous position
 
-### 1. Hero Section
-- Headline: "The Operating System for Modern Nurseries" (or similar)
-- Subheadline explaining Tendryl's all-in-one value proposition
-- CTA buttons: "Request a Demo" and "See Features"
-- Abstract background with subtle leaf/plant motifs combined with tech grid patterns
+### Changes
 
-### 2. Problem Statement
-- Pain points nursery businesses face — disconnected tools, manual scheduling, unreliable communication
-- Sets up why Tendryl exists
+**1. New file: `src/hooks/useDashboardGrid.ts`**
+- Custom hook managing widget layout state (positions, sizes)
+- Grid snapping logic (pointer position → grid cell)
+- Collision detection (occupancy map to prevent overlaps)
+- Handlers for drag start/move/end and resize start/move/end
 
-### 3. Feature Showcase (6 features)
-Each feature gets a visually distinct card with icon and description:
-- **Production Scheduling** — Plan crops, track growth cycles, manage timelines
-- **Greenhouse Management** — Monitor and control environments across facilities
-- **Sensor Integration** — Real-time IoT data (temp, humidity, soil)
-- **Employee Management** — Scheduling, roles, task assignments
-- **WiFi Phone System** — Calls & texts over WiFi, no SIM needed
-- **Unified Dashboard** — Everything in one place
+**2. New file: `src/components/dashboard/DashboardGrid.tsx`**
+- Renders a CSS Grid container with `grid-template-columns: repeat(12, 1fr)`
+- Maps each widget config to a positioned `<div>` using `grid-column` / `grid-row`
+- During drag/resize, uses `position: absolute` with transform for smooth movement, then snaps back to grid on drop
+- Each widget gets a drag handle (top bar) and a resize handle (bottom-right corner)
 
-### 4. "How It Works" Section
-Three-step visual flow: Connect → Manage → Grow
+**3. Edit: `src/pages/Home.tsx`**
+- Replace `ResizablePanelGroup` desktop layout with `<DashboardGrid>` component
+- Define default widget configs: `{ id, component, col, row, colSpan, rowSpan, minW, minH }`
+- Mobile layout stays as-is (stacked, no drag/resize)
 
-### 5. Social Proof / Trust Section
-- Placeholder testimonials and impact stats
+**4. Widget content responsiveness**
+- Each widget wrapper passes its actual pixel dimensions via a `ResizeObserver`
+- Widgets receive container dimensions and adapt content accordingly (e.g., WeatherWidget hides the 3-col stats grid when narrow, GreenhouseMap scales SVG viewBox, ProductionStats switches from 4-col to 2-col when small)
+- Add a `useContainerSize` hook that returns `{ width, height }` using `ResizeObserver`
 
-### 6. Pricing Teaser
-- 3-tier preview (Starter, Pro, Enterprise) with "Contact Us" CTA
+**5. Edit widget components** (all 7 widgets)
+- Wrap each in `useContainerSize` to get dimensions
+- Add conditional rendering: hide secondary content when small, adjust grid columns, scale text sizes
 
-### 7. Final CTA Section
-- "Ready to modernize your nursery?" with demo request form
+### Default Layout (12-col grid, ~80px row height)
+```text
+┌─────────────── Production Stats (12 cols × 1 row) ───────────────┐
+├──── Map (8 cols × 4 rows) ────┬── Weather (4c × 2r) ────────────┤
+│                                ├── Alerts (4c × 2r) ─────────────┤
+├── Tasks (4c × 3r) ─┬─ Schedule (3c × 3r) ┬─ Inventory (3c × 3r) ┬─ Water (2c × 3r) ┤
+└─────────────────────┴────────────────────┴──────────────────────┴──────────────────┘
+```
 
-### 8. Footer
-- Navigation links, contact info, social media placeholders
-- Links to Privacy Policy and Terms & Conditions
-
----
-
-## Privacy Policy Page (`/privacy`)
-A clean, readable legal page covering:
-- What data Tendryl collects (account info, usage data, sensor data, communication records)
-- How the data is used (platform functionality, support, improving services)
-- **Explicit statement that data will NOT be shared with third parties or used for marketing purposes**
-- Data security and retention practices
-- User rights regarding their data
-- Contact information for privacy inquiries
-
-## Terms & Conditions Page (`/terms`)
-A compliant terms page including:
-- **Program name**: Tendryl
-- **Program description**: All-in-one nursery management platform with WiFi-based messaging and calling
-- **Message/data rates**: Standard message and data rates may apply
-- **Message frequency**: Frequency of messages varies based on account activity and settings
-- **Support contact info**: Email and/or phone for support inquiries
-- **Opt-out instructions**: Clear instructions with **STOP** (in bold) to opt out of messages and **HELP** (in bold) to get support
-- General terms of use, liability limitations, and account responsibilities
-
----
-
-## Design Direction
-- **Branding**: "Tendryl" throughout — name evokes tendrils/growth, perfect for the nature-tech fusion
-- **Color palette**: Deep greens, warm earth tones, crisp whites, amber/gold accents for CTAs
-- **Typography**: Clean sans-serif, bold headings, readable body text
-- **Animations**: Subtle scroll-triggered fade-ins
-- **Responsive**: Fully mobile-friendly
-- **Legal pages**: Clean, well-structured with clear headings and readable formatting
+### No external dependencies needed
+Uses only native browser APIs (pointer events, ResizeObserver, CSS Grid). Removes `react-resizable-panels` usage from the dashboard (keeps the component available for other pages).
 
