@@ -7,7 +7,7 @@ export function WeatherWidget() {
   const showDetails = size.height > 120 && size.width > 160;
 
   return (
-    <div ref={ref} className="h-full flex flex-col">
+    <div ref={ref} className="h-full flex flex-col transition-all duration-150">
       <div className="px-4 py-3 border-b border-border">
         <h3 className="text-sm font-semibold font-display tracking-tight">Weather</h3>
         {!compact && <p className="text-[10px] text-muted-foreground mt-0.5">Current conditions</p>}

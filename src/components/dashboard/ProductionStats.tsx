@@ -13,7 +13,7 @@ export function ProductionStats() {
   const cols = size.width < 300 ? 1 : size.width < 500 ? 2 : 4;
 
   return (
-    <div ref={ref} className="h-full p-3">
+    <div ref={ref} className="h-full p-3 transition-all duration-150">
       <div className="grid gap-3 h-full" style={{ gridTemplateColumns: `repeat(${cols}, 1fr)` }}>
         {stats.map((stat) => {
           const Icon = stat.icon;

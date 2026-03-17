@@ -52,7 +52,7 @@ export function GreenhouseMap() {
   const showLegend = size.width > 300;
 
   return (
-    <div ref={ref} className="h-full flex flex-col">
+    <div ref={ref} className="h-full flex flex-col transition-all duration-150">
       <div className="px-4 py-3 border-b border-border flex items-center justify-between">
         <div>
           <h3 className="text-sm font-semibold font-display tracking-tight">Facility Map</h3>
