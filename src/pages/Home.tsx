@@ -1,8 +1,8 @@
 import { useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Responsive, WidthProvider } from "react-grid-layout";
 // @ts-ignore
-import type { Layout } from "react-grid-layout";
+import ReactGridLayout from "react-grid-layout";
+const { Responsive, WidthProvider } = ReactGridLayout;
 import { Home as HomeIcon, Phone, MessageSquare, LogOut, Sprout } from "lucide-react";
 import { GreenhouseMap } from "@/components/dashboard/GreenhouseMap";
 import { TodaysTasks } from "@/components/dashboard/TodaysTasks";
@@ -23,7 +23,7 @@ const navItems = [
   { icon: MessageSquare, label: "Messages", path: "/messages" },
 ];
 
-const defaultLayouts: { lg: Layout } = {
+const defaultLayouts: any = {
   lg: [
     { i: "stats", x: 0, y: 0, w: 12, h: 3, minW: 6, minH: 2 },
     { i: "map", x: 0, y: 3, w: 8, h: 8, minW: 4, minH: 5 },
