@@ -21,57 +21,84 @@ interface DragState {
   startRowSpan?: number;
 }
 
-function cellsOccupied(layout: WidgetLayout): Set<string> {
-  const cells = new Set<string>();
-  for (let c = layout.col; c < layout.col + layout.colSpan; c++) {
-    for (let r = layout.row; r < layout.row + layout.rowSpan; r++) {
-      cells.add(`${c},${r}`);
-    }
-  }
-  return cells;
+type DragPhase = "idle" | "dragging" | "dropping";
+
+function intersects(a: WidgetLayout, b: WidgetLayout): boolean {
+  return !(
+    a.col + a.colSpan <= b.col ||
+    b.col + b.colSpan <= a.col ||
+    a.row + a.rowSpan <= b.row ||
+    b.row + b.rowSpan <= a.row
+  );
 }
 
-function hasCollision(
-  layouts: WidgetLayout[],
-  target: WidgetLayout,
+function isOutOfBounds(layout: WidgetLayout, cols: number, maxRows: number): boolean {
+  return (
+    layout.col < 1 ||
+    layout.row < 1 ||
+    layout.col + layout.colSpan - 1 > cols ||
+    layout.row + layout.rowSpan - 1 > maxRows
+  );
+}
+
+function resolveWithReflow(
+  sourceLayouts: WidgetLayout[],
+  candidate: WidgetLayout,
   cols: number,
   maxRows: number
-): boolean {
-  // Check bounds
-  if (target.col < 1 || target.row < 1) return true;
-  if (target.col + target.colSpan - 1 > cols) return true;
-  if (target.row + target.rowSpan - 1 > maxRows) return true;
+): WidgetLayout[] | null {
+  if (isOutOfBounds(candidate, cols, maxRows)) return null;
 
-  const targetCells = cellsOccupied(target);
-  for (const layout of layouts) {
-    if (layout.id === target.id) continue;
-    const otherCells = cellsOccupied(layout);
-    for (const cell of targetCells) {
-      if (otherCells.has(cell)) return true;
+  const next = sourceLayouts.map((layout) =>
+    layout.id === candidate.id ? { ...candidate } : { ...layout }
+  );
+
+  const queue: string[] = [candidate.id];
+  while (queue.length > 0) {
+    const currentId = queue.shift();
+    const current = next.find((item) => item.id === currentId);
+    if (!current) continue;
+    if (isOutOfBounds(current, cols, maxRows)) return null;
+
+    for (const other of next) {
+      if (other.id === current.id) continue;
+      if (!intersects(current, other)) continue;
+
+      const displacedRow = current.row + current.rowSpan;
+      if (other.row !== displacedRow) {
+        other.row = displacedRow;
+        if (isOutOfBounds(other, cols, maxRows)) return null;
+      }
+      queue.push(other.id);
     }
   }
-  return false;
+
+  return next;
 }
 
 export function useDashboardGrid(
   initialLayouts: WidgetLayout[],
   cols: number = 12,
-  maxRows: number = 12
+  maxRows: number = 12,
+  rowHeight: number = 80
 ) {
   const [layouts, setLayouts] = useState<WidgetLayout[]>(initialLayouts);
   const dragStateRef = useRef<DragState | null>(null);
+  const dropTimeoutRef = useRef<number | null>(null);
+  const previewLayoutsRef = useRef<WidgetLayout[] | null>(null);
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [preview, setPreview] = useState<WidgetLayout | null>(null);
+  const [dragPhase, setDragPhase] = useState<DragPhase>("idle");
+  const [previewLayouts, setPreviewLayouts] = useState<WidgetLayout[] | null>(null);
+  const [dropTarget, setDropTarget] = useState<WidgetLayout | null>(null);
 
   const getCellSize = useCallback(
     (containerEl: HTMLElement) => {
       const rect = containerEl.getBoundingClientRect();
       const cellW = rect.width / cols;
-      // Use a fixed row height based on container
-      const cellH = 80;
+      const cellH = rowHeight;
       return { cellW, cellH, left: rect.left, top: rect.top };
     },
-    [cols]
+    [cols, rowHeight]
   );
 
   const startDrag = useCallback(
@@ -94,6 +121,12 @@ export function useDashboardGrid(
         mode: "drag",
       };
       setActiveId(widgetId);
+      setDragPhase("dragging");
+
+      if (dropTimeoutRef.current !== null) {
+        window.clearTimeout(dropTimeoutRef.current);
+        dropTimeoutRef.current = null;
+      }
 
       const onMove = (ev: PointerEvent) => {
         const state = dragStateRef.current;
@@ -112,8 +145,11 @@ export function useDashboardGrid(
           row: newRow,
         };
 
-        if (!hasCollision(layouts, candidate, cols, maxRows)) {
-          setPreview(candidate);
+        const resolved = resolveWithReflow(layouts, candidate, cols, maxRows);
+        if (resolved) {
+          setDropTarget(candidate);
+          previewLayoutsRef.current = resolved;
+          setPreviewLayouts(resolved);
         }
       };
 
@@ -121,19 +157,16 @@ export function useDashboardGrid(
         document.removeEventListener("pointermove", onMove);
         document.removeEventListener("pointerup", onUp);
         dragStateRef.current = null;
-        setActiveId(null);
-        setPreview((prev) => {
-          if (prev) {
-            setLayouts((ls) =>
-              ls.map((l) =>
-                l.id === widgetId
-                  ? { ...l, col: prev.col, row: prev.row }
-                  : l
-              )
-            );
-          }
-          return null;
-        });
+        setDragPhase("dropping");
+        setLayouts((ls) => previewLayoutsRef.current ?? ls);
+        previewLayoutsRef.current = null;
+        setPreviewLayouts(null);
+        setDropTarget(null);
+        dropTimeoutRef.current = window.setTimeout(() => {
+          setActiveId(null);
+          setDragPhase("idle");
+          dropTimeoutRef.current = null;
+        }, 360);
       };
 
       document.addEventListener("pointermove", onMove);
@@ -164,6 +197,12 @@ export function useDashboardGrid(
         mode: "resize",
       };
       setActiveId(widgetId);
+      setDragPhase("dragging");
+
+      if (dropTimeoutRef.current !== null) {
+        window.clearTimeout(dropTimeoutRef.current);
+        dropTimeoutRef.current = null;
+      }
 
       const onMove = (ev: PointerEvent) => {
         const state = dragStateRef.current;
@@ -188,8 +227,11 @@ export function useDashboardGrid(
           rowSpan: newRowSpan,
         };
 
-        if (!hasCollision(layouts, candidate, cols, maxRows)) {
-          setPreview(candidate);
+        const resolved = resolveWithReflow(layouts, candidate, cols, maxRows);
+        if (resolved) {
+          setDropTarget(candidate);
+          previewLayoutsRef.current = resolved;
+          setPreviewLayouts(resolved);
         }
       };
 
@@ -197,19 +239,16 @@ export function useDashboardGrid(
         document.removeEventListener("pointermove", onMove);
         document.removeEventListener("pointerup", onUp);
         dragStateRef.current = null;
-        setActiveId(null);
-        setPreview((prev) => {
-          if (prev) {
-            setLayouts((ls) =>
-              ls.map((l) =>
-                l.id === widgetId
-                  ? { ...l, colSpan: prev.colSpan, rowSpan: prev.rowSpan }
-                  : l
-              )
-            );
-          }
-          return null;
-        });
+        setDragPhase("dropping");
+        setLayouts((ls) => previewLayoutsRef.current ?? ls);
+        previewLayoutsRef.current = null;
+        setPreviewLayouts(null);
+        setDropTarget(null);
+        dropTimeoutRef.current = window.setTimeout(() => {
+          setActiveId(null);
+          setDragPhase("idle");
+          dropTimeoutRef.current = null;
+        }, 360);
       };
 
       document.addEventListener("pointermove", onMove);
@@ -220,16 +259,17 @@ export function useDashboardGrid(
 
   const getLayout = useCallback(
     (id: string): WidgetLayout | undefined => {
-      if (preview && preview.id === id) return preview;
-      return layouts.find((l) => l.id === id);
+      const source = previewLayouts ?? layouts;
+      return source.find((l) => l.id === id);
     },
-    [layouts, preview]
+    [layouts, previewLayouts]
   );
 
   return {
     layouts,
     activeId,
-    preview,
+    dragPhase,
+    dropTarget,
     startDrag,
     startResize,
     getLayout,

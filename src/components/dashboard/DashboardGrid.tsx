@@ -38,10 +38,11 @@ export function DashboardGrid({
     minH: w.minH,
   }));
 
-  const { activeId, startDrag, startResize, getLayout } = useDashboardGrid(
+  const { activeId, dragPhase, dropTarget, startDrag, startResize, getLayout } = useDashboardGrid(
     initialLayouts,
     cols,
-    maxRows
+    maxRows,
+    rowHeight
   );
 
   // Compute total rows needed
@@ -64,17 +65,31 @@ export function DashboardGrid({
         gap: "12px",
       }}
     >
+      {dropTarget && dragPhase === "dragging" && (
+        <div
+          className="pointer-events-none rounded-xl border-2 border-dashed border-primary/50 bg-primary/10 transition-all duration-150"
+          style={{
+            gridColumn: `${dropTarget.col} / span ${dropTarget.colSpan}`,
+            gridRow: `${dropTarget.row} / span ${dropTarget.rowSpan}`,
+          }}
+        />
+      )}
+
       {widgets.map((widget) => {
         const layout = getLayout(widget.id) || widget;
         const isActive = activeId === widget.id;
+        const isDragging = isActive && dragPhase === "dragging";
+        const isDropping = isActive && dragPhase === "dropping";
 
         return (
           <div
             key={widget.id}
-            className={`relative rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col transition-shadow ${
+            className={`relative rounded-xl border bg-card shadow-sm overflow-hidden flex flex-col transition-all duration-150 ${
               isActive
                 ? "shadow-lg ring-2 ring-primary/30 z-10"
                 : "border-border"
+            } ${isDragging ? "shadow-2xl ring-primary/50 opacity-95 animate-widget-pickup" : ""} ${
+              isDropping ? "animate-widget-drop" : ""
             }`}
             style={{
               gridColumn: `${layout.col} / span ${layout.colSpan}`,
@@ -83,7 +98,9 @@ export function DashboardGrid({
           >
             {/* Drag handle */}
             <div
-              className="flex items-center justify-center h-5 cursor-grab active:cursor-grabbing bg-muted/30 hover:bg-muted/60 transition-colors border-b border-border/50 flex-shrink-0"
+              className={`flex items-center justify-center h-5 cursor-grab active:cursor-grabbing bg-muted/30 hover:bg-muted/60 transition-colors border-b border-border/50 flex-shrink-0 ${
+                isDragging ? "bg-primary/15" : ""
+              }`}
               onPointerDown={(e) => {
                 if (containerRef.current) {
                   startDrag(e, widget.id, containerRef.current);
@@ -91,6 +108,12 @@ export function DashboardGrid({
               }}
             >
               <GripVertical className="h-3 w-3 text-muted-foreground/50" />
+              {isDragging && (
+                <span className="ml-2 text-[10px] font-medium text-primary">Picked up</span>
+              )}
+              {isDropping && (
+                <span className="ml-2 text-[10px] font-medium text-primary">Dropped</span>
+              )}
             </div>
 
             {/* Widget content */}

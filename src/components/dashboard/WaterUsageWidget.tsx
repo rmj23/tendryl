@@ -18,7 +18,7 @@ export function WaterUsageWidget() {
   const barMaxH = Math.max(20, size.height - 80);
 
   return (
-    <div ref={ref} className="h-full flex flex-col">
+    <div ref={ref} className="h-full flex flex-col transition-all duration-150">
       <div className="px-3 py-3 border-b border-border">
         <div className="flex items-center gap-1.5">
           <Droplets className="h-3 w-3 text-[hsl(217,91%,60%)]" />
