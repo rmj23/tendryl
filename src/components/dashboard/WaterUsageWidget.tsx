@@ -1,4 +1,5 @@
 import { Droplets } from "lucide-react";
+import { useContainerSize } from "@/hooks/useContainerSize";
 
 const days = [
   { day: "Mon", usage: 65 },
@@ -11,21 +12,25 @@ const days = [
 ];
 
 export function WaterUsageWidget() {
+  const { ref, size } = useContainerSize();
   const max = Math.max(...days.map((d) => d.usage));
+  const compact = size.width < 120;
+  const barMaxH = Math.max(20, size.height - 80);
+
   return (
-    <div className="h-full flex flex-col">
-      <div className="px-3 py-3 border-b border-[hsl(220,15%,90%)]">
+    <div ref={ref} className="h-full flex flex-col">
+      <div className="px-3 py-3 border-b border-border">
         <div className="flex items-center gap-1.5">
-          <Droplets className="h-3 w-3 text-[#3b82f6]" />
-          <h3 className="text-xs font-semibold font-display tracking-tight text-[hsl(220,15%,15%)]">Water</h3>
+          <Droplets className="h-3 w-3 text-[hsl(217,91%,60%)]" />
+          <h3 className="text-xs font-semibold font-display tracking-tight">Water</h3>
         </div>
-        <p className="text-[10px] text-[hsl(220,10%,55%)] mt-0.5">This week</p>
+        {!compact && <p className="text-[10px] text-muted-foreground mt-0.5">This week</p>}
       </div>
       <div className="flex-1 flex items-end gap-1 px-2 pb-2 pt-3">
         {days.map((d) => (
           <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
-            <div className="w-full rounded-sm bg-[#3b82f6]/40 transition-all min-h-[4px]" style={{ height: `${(d.usage / max) * 60}px` }} />
-            <span className="text-[8px] text-[hsl(220,10%,60%)]">{d.day.charAt(0)}</span>
+            <div className="w-full rounded-sm bg-[hsl(217,91%,60%,0.4)] transition-all min-h-[4px]" style={{ height: `${(d.usage / max) * barMaxH}px` }} />
+            {!compact && <span className="text-[8px] text-muted-foreground">{d.day.charAt(0)}</span>}
           </div>
         ))}
       </div>
