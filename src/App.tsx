@@ -8,6 +8,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import CallFlowBuilder from "./pages/CallFlowBuilder";
 import HomePage from "./pages/Home";
+import ProductionScheduling from "./pages/ProductionScheduling";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/home" element={<HomePage />} />
+          <Route path="/production-scheduling" element={<ProductionScheduling />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/call-flows" element={<CallFlowBuilder />} />
