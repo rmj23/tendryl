@@ -1,87 +1,77 @@
 
 
-## Production Scheduling Page
+# 🌿 Tendryl — SaaS Landing Page + Legal Pages
 
-### Plant Production Stages
+## Overview
+A bold, modern landing page for **Tendryl** — an all-in-one plant nursery management platform. The design blends organic, nature-inspired aesthetics (greens, earth tones, soft gradients) with a sleek, tech-forward feel. Plus two essential legal pages for compliance.
 
-Based on nursery industry standards, the stages are:
+---
 
-1. **Propagation** — Seed sowing, cutting, or tissue culture
-2. **Germination** — Seeds sprout / cuttings root
-3. **Transplanting** — Move to larger containers
-4. **Vegetative Growth** — Active leaf/stem development
-5. **Hardening Off** — Acclimate to outdoor conditions
-6. **Flowering / Fruiting** — Bloom stage (if applicable)
-7. **Ready for Retail** — Market-ready, staged for sale
-8. **Shipped** — Dispatched to customer/retail location
+## Landing Page Sections
 
-### UX Approach — Gantt-style Calendar
+### 1. Hero Section
+- Headline: "The Operating System for Modern Nurseries" (or similar)
+- Subheadline explaining Tendryl's all-in-one value proposition
+- CTA buttons: "Request a Demo" and "See Features"
+- Abstract background with subtle leaf/plant motifs combined with tech grid patterns
 
-The most intuitive view for production managers is a **horizontal Gantt timeline** where each row is a crop batch and colored bars span the weeks each stage occupies. This mirrors how growers think: "Week 12 I sow petunias, week 16 I transplant, week 22 they're retail-ready."
+### 2. Problem Statement
+- Pain points nursery businesses face — disconnected tools, manual scheduling, unreliable communication
+- Sets up why Tendryl exists
 
-### Files to Create/Edit
+### 3. Feature Showcase (6 features)
+Each feature gets a visually distinct card with icon and description:
+- **Production Scheduling** — Plan crops, track growth cycles, manage timelines
+- **Greenhouse Management** — Monitor and control environments across facilities
+- **Sensor Integration** — Real-time IoT data (temp, humidity, soil)
+- **Employee Management** — Scheduling, roles, task assignments
+- **WiFi Phone System** — Calls & texts over WiFi, no SIM needed
+- **Unified Dashboard** — Everything in one place
 
-**1. `src/types/production.ts`** — Types
-- `ProductionStage` enum (8 stages above)
-- `CropBatch` type: `{ id, cropName, greenhouse, stages: { stage, startDate, endDate }[], notes }`
+### 4. "How It Works" Section
+Three-step visual flow: Connect → Manage → Grow
 
-**2. `src/hooks/useProductionSchedule.ts`** — State hook
-- Manages array of `CropBatch` items (local state with mock data for now)
-- CRUD operations: add batch, edit batch, delete batch
+### 5. Social Proof / Trust Section
+- Placeholder testimonials and impact stats
 
-**3. `src/components/production/GanttTimeline.tsx`** — Main calendar view
-- Horizontal scrollable timeline (columns = weeks, configurable range)
-- Each row = one crop batch; colored bars per stage
-- Stage colors are consistent (e.g., green for vegetative, orange for hardening, purple for flowering)
-- Click a bar to edit that stage's dates
-- Week/month toggle for zoom level
+### 6. Pricing Teaser
+- 3-tier preview (Starter, Pro, Enterprise) with "Contact Us" CTA
 
-**4. `src/components/production/BatchFormModal.tsx`** — Add/edit crop batch
-- Fields: crop name, greenhouse (dropdown), notes
-- For each stage: start date and end date pickers
-- Auto-suggest stage durations based on crop type (stretch goal)
+### 7. Final CTA Section
+- "Ready to modernize your nursery?" with demo request form
 
-**5. `src/components/production/StageTag.tsx`** — Small colored badge component for stage labels
+### 8. Footer
+- Navigation links, contact info, social media placeholders
+- Links to Privacy Policy and Terms & Conditions
 
-**6. `src/pages/ProductionScheduling.tsx`** — Page shell
-- Reuses the same sidebar/nav layout from `Home.tsx` (extract a shared `AppLayout` wrapper)
-- Header with title + "Add Batch" button
-- Filter bar: filter by greenhouse, crop name, current stage
-- `<GanttTimeline />` as the main content area
-- Mobile: vertical card list grouped by week (Gantt not practical on small screens)
+---
 
-**7. `src/components/layout/AppLayout.tsx`** — Extract shared layout
-- Pull the sidebar, mobile header, and bottom nav out of `Home.tsx` into a reusable layout component
-- Both `Home.tsx` and `ProductionScheduling.tsx` will use it
+## Privacy Policy Page (`/privacy`)
+A clean, readable legal page covering:
+- What data Tendryl collects (account info, usage data, sensor data, communication records)
+- How the data is used (platform functionality, support, improving services)
+- **Explicit statement that data will NOT be shared with third parties or used for marketing purposes**
+- Data security and retention practices
+- User rights regarding their data
+- Contact information for privacy inquiries
 
-**8. `src/App.tsx`** — Add route
-- Add `/production-scheduling` route
-- Add nav item to `navItems` in the shared layout
+## Terms & Conditions Page (`/terms`)
+A compliant terms page including:
+- **Program name**: Tendryl
+- **Program description**: All-in-one nursery management platform with WiFi-based messaging and calling
+- **Message/data rates**: Standard message and data rates may apply
+- **Message frequency**: Frequency of messages varies based on account activity and settings
+- **Support contact info**: Email and/or phone for support inquiries
+- **Opt-out instructions**: Clear instructions with **STOP** (in bold) to opt out of messages and **HELP** (in bold) to get support
+- General terms of use, liability limitations, and account responsibilities
 
-**9. `src/pages/Home.tsx`** — Update nav
-- Add "Production" to `navItems` with a `Calendar` icon
+---
 
-### Visual Summary
-
-```text
-┌─ Sidebar ─┬─────────────────────────────────────────────┐
-│ Home      │  Production Scheduling    [+ Add Batch]     │
-│ Prod Sched│  ┌─ Filters: Greenhouse ▼  Crop ▼  Stage ▼ │
-│ Call Flows│  ├──────────────────────────────────────────│
-│ Messages  │  │  Wk12  Wk13  Wk14  Wk15  Wk16  Wk17   │
-│           │  │ Petunias ████████████████████████████     │
-│           │  │ Tomatoes      ██████████████████████████  │
-│           │  │ Herbs            ████████████             │
-│           │  │ Succulents ████████████████████████       │
-│           │  └──────────────────────────────────────────│
-└───────────┴─────────────────────────────────────────────┘
-   Legend: ■ Propagation ■ Germination ■ Transplant ■ Growth ■ Hardening ■ Flowering ■ Retail ■ Shipped
-```
-
-### Key Interactions
-- **Drag bar edges** to adjust stage start/end dates inline
-- **Click a row** to open the batch detail/edit modal
-- **Hover a bar segment** to see stage name, dates, and duration tooltip
-- **Filter bar** narrows visible batches by greenhouse or stage
-- **Week/Month toggle** controls zoom level on the timeline
+## Design Direction
+- **Branding**: "Tendryl" throughout — name evokes tendrils/growth, perfect for the nature-tech fusion
+- **Color palette**: Deep greens, warm earth tones, crisp whites, amber/gold accents for CTAs
+- **Typography**: Clean sans-serif, bold headings, readable body text
+- **Animations**: Subtle scroll-triggered fade-ins
+- **Responsive**: Fully mobile-friendly
+- **Legal pages**: Clean, well-structured with clear headings and readable formatting
 
