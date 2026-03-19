@@ -21,7 +21,7 @@ export default function AppLayout({ title, subtitle, headerRight, children }: Ap
   const isMobile = useIsMobile();
 
   return (
-    <div className="h-screen flex flex-col md:flex-row bg-background text-foreground">
+    <div className="h-screen flex flex-col md:flex-row bg-background text-foreground overflow-hidden">
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-[200px] flex-shrink-0 border-r border-primary/25 bg-primary text-primary-foreground flex-col">
         <div className="px-4 py-5 flex items-center gap-2">
