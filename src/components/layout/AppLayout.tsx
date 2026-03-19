@@ -72,7 +72,9 @@ export default function AppLayout({ title, subtitle, headerRight, children }: Ap
           <div className="shrink-0">{headerRight}</div>
         </div>
 
-        {children}
+        <div className="flex-1 min-h-0 flex flex-col overflow-hidden">
+          {children}
+        </div>
       </main>
 
       {/* Mobile Bottom Nav */}
