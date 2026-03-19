@@ -52,9 +52,9 @@ export default function ProductionScheduling() {
     >
       {/* Filter bar */}
       <div className="px-4 md:px-6 py-2.5 border-b border-border bg-card flex flex-wrap items-center gap-2">
-        <Filter className="h-3.5 w-3.5 text-muted-foreground" />
+        <Filter className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
         <Select value={filterGreenhouse} onValueChange={(v) => setFilterGreenhouse(v === "all" ? "" : v)}>
-          <SelectTrigger className="h-8 w-[150px] text-xs">
+          <SelectTrigger className="h-8 w-full sm:w-[150px] text-xs">
             <SelectValue placeholder="All Greenhouses" />
           </SelectTrigger>
           <SelectContent>
@@ -66,7 +66,7 @@ export default function ProductionScheduling() {
         </Select>
 
         <Select value={filterStage} onValueChange={(v) => setFilterStage(v === "all" ? "" : v)}>
-          <SelectTrigger className="h-8 w-[160px] text-xs">
+          <SelectTrigger className="h-8 w-full sm:w-[160px] text-xs">
             <SelectValue placeholder="All Stages" />
           </SelectTrigger>
           <SelectContent>
@@ -77,10 +77,10 @@ export default function ProductionScheduling() {
           </SelectContent>
         </Select>
 
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
           <Input
-            className="h-8 pl-7 w-[160px] text-xs"
+            className="h-8 pl-7 w-full sm:w-[160px] text-xs"
             placeholder="Search crop..."
             value={filterCrop}
             onChange={(e) => setFilterCrop(e.target.value)}
