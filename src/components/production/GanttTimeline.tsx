@@ -93,7 +93,7 @@ export function GanttTimeline({
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full min-w-0 overflow-hidden">
       {/* Zoom toggle */}
       <div className="flex items-center gap-2 px-4 py-2 border-b border-border bg-card shrink-0">
         <span className="text-xs text-muted-foreground font-medium mr-1">Zoom:</span>
