@@ -125,7 +125,7 @@ export function GanttTimeline({
       </div>
 
       {/* Timeline */}
-      <div ref={scrollRef} className="flex-1 overflow-x-auto overflow-y-auto">
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-x-auto overflow-y-auto">
         <div style={{ minWidth: totalWidth + 200, width: 'max-content' }}>
           {/* Header row */}
           <div className="flex sticky top-0 z-10 bg-card border-b border-border">
