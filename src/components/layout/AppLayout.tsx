@@ -57,7 +57,7 @@ export default function AppLayout({ title, subtitle, headerRight, children }: Ap
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col min-h-0 pb-16 md:pb-0">
+      <main className="flex-1 flex flex-col min-h-0 min-w-0 pb-16 md:pb-0 overflow-hidden">
         {/* Mobile header */}
         <div className="md:hidden px-4 py-3 border-b border-primary/25 bg-primary text-primary-foreground flex items-center gap-2">
           <Sprout className="h-5 w-5" />
