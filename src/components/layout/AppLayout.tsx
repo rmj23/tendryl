@@ -64,12 +64,12 @@ export default function AppLayout({ title, subtitle, headerRight, children }: Ap
           <span className="font-display font-bold text-base tracking-tight text-primary-foreground">Tendryl</span>
         </div>
 
-        <div className="px-4 md:px-6 py-4 md:py-5 border-b border-border bg-card flex items-center gap-4">
-          <div className="flex-1">
-            <h1 className="font-display text-lg font-bold tracking-tight">{title}</h1>
-            {subtitle && <p className="text-xs text-muted-foreground mt-0.5">{subtitle}</p>}
+        <div className="px-4 md:px-6 py-4 md:py-5 border-b border-border bg-card flex flex-wrap items-center gap-2 md:gap-4">
+          <div className="flex-1 min-w-0">
+            <h1 className="font-display text-lg font-bold tracking-tight truncate">{title}</h1>
+            {subtitle && <p className="text-xs text-muted-foreground mt-0.5 truncate">{subtitle}</p>}
           </div>
-          {headerRight}
+          <div className="shrink-0">{headerRight}</div>
         </div>
 
         {children}
